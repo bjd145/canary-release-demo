@@ -10,4 +10,5 @@ A simple REST API that I use to test Azure DevOps, Kubernetes, Docker and other 
 
 # Test
 * curl http://127.0.0.1:8081/api/os
-{"Time":"Friday, 06-Mar-20 16:12:35 UTC","Host":"4921deb4d042","OSType":"linux","Version":"v3"}
+
+  {"Time":"Friday, 06-Mar-20 16:12:35 UTC","Host":"4921deb4d042","OSType":"linux","Version":"v3"}
