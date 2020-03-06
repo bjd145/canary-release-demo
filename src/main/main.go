@@ -16,7 +16,7 @@ var version string = "v1"
 
 type OS struct {
 	Time string
-    Host string
+	Host string
 	OSType string
 	Version string
 }
