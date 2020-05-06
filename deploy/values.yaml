@@ -1,0 +1,18 @@
+replicaCount: 2
+
+image:
+  repository: bjd145
+  name: whatos
+  stageTag: "2.0"
+  prodTag: "1.0"
+
+service:
+  port: 8081
+  prodName: whatos-prod
+  prodWeight: 100%
+  prodVersion: v1
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
