@@ -1,12 +1,12 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ .Values.image.name }}-{{ .Values.image.prodTag }}
+  name: {{ .Values.image.name }}-{{ .Values.image.blueTag }}
   labels: 
     app: {{ .Values.image.name }}
-    version: {{ .Values.service.prodVersion }}
+    version: {{ .Values.service.blueVersion }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.blueReplicaCount }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -16,11 +16,45 @@ spec:
     metadata:
       labels:
         app: {{ .Values.image.name }}
-        version: {{ .Values.service.prodVersion }}
+        version: {{ .Values.service.blueVersion }}
     spec:
       containers:
       - name: {{ .Values.image.name }}
-        image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.prodTag }}
+        image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.blueTag }}
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {{ .Values.service.port }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Values.image.name }}-{{ .Values.image.greenTag }}
+  labels: 
+    app: {{ .Values.image.name }}
+    version: {{ .Values.service.greenVersion }}
+spec:
+  replicas: {{ .Values.greenReplicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.image.name }}
+        version: {{ .Values.service.greenVersion }}
+    spec:
+      containers:
+      - name: {{ .Values.image.name }}
+        image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.greenTag }}
         resources:
           requests:
             memory: "64Mi"

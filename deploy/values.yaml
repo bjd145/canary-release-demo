@@ -1,16 +1,20 @@
-replicaCount: 2
+blueReplicaCount: 2
+greenReplicaCount: 1
 
 image:
   repository: bjd145
   name: whatos
-  stageTag: "2.0"
-  prodTag: "1.0"
+  blueTag: "1.0"
+  greenTag: "2.0"
 
 service:
   port: 8081
-  prodName: whatos-prod
-  prodWeight: 100%
-  prodVersion: v1
+  blueName: whatos-v1
+  blueWeight: 80%
+  blueVersion: v1
+  greenName: whatos-v2
+  greenWeight: 20%
+  greenVersion: v2
 
 resources: {}
 nodeSelector: {}

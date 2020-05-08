@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.service.prodName }}
+  name: {{ .Values.service.blueName }}
   labels:
     app: {{ .Values.image.name }}
     service: {{ .Values.image.name }}
-    slot: prod
+    slot: blue
 spec:
   ports:
   - port: {{ .Values.service.port }}
@@ -13,4 +13,21 @@ spec:
   type: ClusterIP 
   selector:
     app: {{ .Values.image.name }}
-    version: {{ .Values.service.prodVersion }}
+    version: {{ .Values.service.blueVersion }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.greenName }}
+  labels:
+    app: {{ .Values.image.name }}
+    service: {{ .Values.image.name }}
+    slot: green
+spec:
+  ports:
+  - port: {{ .Values.service.port }}
+    name: http
+  type: ClusterIP 
+  selector:
+    app: {{ .Values.image.name }}
+    version: {{ .Values.service.greenVersion }}

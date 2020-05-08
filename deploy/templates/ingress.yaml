@@ -4,13 +4,18 @@ kind: Ingress
 metadata:
   annotations:
     traefik.ingress.kubernetes.io/service-weights: | 
-      {{ .Values.service.prodName }}: {{ .Values.service.prodWeight }}
-  name: {{ .Values.service.prodName }}
+      {{ .Values.service.blueName }}: {{ .Values.service.blueWeight }}
+      {{ .Values.service.greenName }}: {{ .Values.service.greenWeight }}
+  name: {{ .Values.service.blueName }}
 spec:
   rules:
   - http: 
       paths: 
       - backend:
-          serviceName: {{ .Values.service.prodName }}
+          serviceName: {{ .Values.service.blueName }}
+          servicePort: {{ .Values.service.port }}
+        path: /
+      - backend:
+          serviceName: {{ .Values.service.greenName }} 
           servicePort: {{ .Values.service.port }}
         path: /
