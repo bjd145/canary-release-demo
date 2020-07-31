@@ -1,0 +1,67 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - pipelines/*
+    - deploy/*
+
+variables:
+    dockerid:   'bjd145'
+    imageName:  'bjd145/whatos'
+    blueWeight: 0
+    blueReplicas: 0
+    greenWeight: 0
+    greenReplicas: 0
+
+stages:
+- stage: builds
+  jobs: 
+  - job: 'Build_And_Push'
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: deploy
+        TargetFolder: '$(build.artifactstagingdirectory)'
+      displayName: Copy Artifacts  
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Build Artifacts 
+
+- stage: deploy_10_percent
+  jobs:
+  - deployment: 'Deploy_To_AKS'
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    environment: 'AKS.whatosapi'
+    strategy:
+      canary:
+        increments: [10,20]  
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              targetPath: '$(System.DefaultWorkingDirectory)/'
+
+          - task: PowerShell@2
+            displayName: "Set Values"
+            script: |
+              Write-Host ("Strategy Increment {0}" -f $(strategy.increment) )
+
+              $blueWeight = "{0}%" -f $(strategy.increment) 
+              $greenWeight = "{0}%" -f (100 - $(strategy.increment))
+              Write-Host "##vso[task.setvariable variable=blueWeight]$blueWeight"
+              Write-Host "##vso[task.setvariable variable=InstallScriptUri]$greenWeight"
+
+          - task: PowerShell@2
+            displayName: "Display Values"
+            script: |
+              Write-Host ("Blue Weight: {0}" -f $(blueWeight) )
+              Write-Host ("Green Weight: {0}" -f $(blueWeight) )
+
+
