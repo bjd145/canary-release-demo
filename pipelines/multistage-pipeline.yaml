@@ -1,0 +1,47 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - pipelines/*
+    - deploy/*
+
+variables:
+    dockerid:   'bjd145'
+    imageName:  'bjd145/whatos'
+
+stages:
+- stage: builds
+  jobs: 
+  - job: 'Build_And_Push'
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+         
+    - bash: |
+        echo $(dockerPassword) | docker login -u $(dockerId) --password-stdin
+      displayName: Log into Docker
+
+    - bash: |
+        cd src
+        docker build -t $(imageName):1.0 .
+        docker push $(imageName):1.0
+      displayName: Build and Push Container v1.0
+
+    - bash: |
+        cd src
+        docker build -t $(imageName):2.0 .
+        docker push $(imageName):2.0
+      displayName: Build and Push Container v2.0
+
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: Deploy
+        TargetFolder: '$(build.artifactstagingdirectory)'
+      displayName: Copy Artifacts  
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Build Artifacts 
+
