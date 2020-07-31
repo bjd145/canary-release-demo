@@ -87,7 +87,7 @@ stages:
 
         on:
           failure:         
-          steps:
+            steps:
             - task: HelmDeploy@0
               displayName: 'helm rollback'
               inputs:
