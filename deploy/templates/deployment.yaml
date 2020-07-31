@@ -6,6 +6,10 @@ metadata:
     app: {{ .Values.image.name }}
     version: {{ .Values.service.blueVersion }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.image.name }}
+      version: {{ .Values.service.greenVersion }}
   replicas: {{ .Values.blueReplicaCount }}
   strategy:
     type: RollingUpdate
@@ -40,6 +44,10 @@ metadata:
     app: {{ .Values.image.name }}
     version: {{ .Values.service.greenVersion }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.image.name }}
+      version: {{ .Values.service.greenVersion }}
   replicas: {{ .Values.greenReplicaCount }}
   strategy:
     type: RollingUpdate
