@@ -59,13 +59,13 @@ stages:
             inputs:
               buildType: 'current'
               targetPath: '$(System.DefaultWorkingDirectory)/'
+
+        deploy:
+          steps:
           - task: HelmInstaller@0
             displayName: 'Install Helm 3.0.2'
             inputs:
               helmVersionToInstall: '3.0.2'
-
-        deploy:
-          steps:
           - task: HelmDeploy@0
             displayName: 'helm upgrade'
             inputs:
