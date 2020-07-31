@@ -63,14 +63,13 @@ stages:
               script: |
                 $pods = @{ "0" = 0; "10" = 1; "50" = 2; "90" = 3; "100" = 4 }
 
-                Write-Host ("Strategy Increment {0}" -f $(strategy.increment) )
-
+                $blue  = $(strategy.increment)
                 $green = 100 - $(strategy.increment)
 
-                $blueReplicas = $pods[[convert]::ToString($(strategy.increment))]
+                $blueReplicas = $pods[[convert]::ToString($blue)]
                 $greenReplicas = $pods[[convert]::ToString($green)]
 
-                $blueWeight = "{0}%" -f $(strategy.increment) 
+                $blueWeight = "{0}%" -f $blue
                 $greenWeight = "{0}%" -f $green
 
                 Write-Host "##vso[task.setvariable variable=blueWeight]$blueWeight"
