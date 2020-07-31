@@ -40,7 +40,7 @@ stages:
     environment: 'AKS.whatosapi'
     strategy:
       canary:
-        increments: [10,20]  
+        increments: [10,50,90]  
         deploy:
           steps:
           - task: DownloadPipelineArtifact@2
@@ -54,19 +54,29 @@ stages:
               targetType: 'inline'
               script: |
                 Write-Host ("Blue Weight: {0}" -f $(blueWeight) )
-                Write-Host ("Green Weight: {0}" -f $(blueWeight) )
+                Write-Host ("Green Weight: {0}" -f $(greenWeight) )
 
           - task: PowerShell@2
             displayName: "Set Values"
             inputs:
               targetType: 'inline'
               script: |
+                $pods = @{ "0" = 0; "10" = 1; "50" = 2; "90" = 3; "100" = 4 }
+
                 Write-Host ("Strategy Increment {0}" -f $(strategy.increment) )
-      
+
+                $green = 100 - $(strategy.increment)
+
+                $blueReplicas = $pods[[convert]::ToString($(strategy.increment))]
+                $greenReplicas = $pods[[convert]::ToString($green)]
+
                 $blueWeight = "{0}%" -f $(strategy.increment) 
-                $greenWeight = "{0}%" -f (100 - $(strategy.increment))
+                $greenWeight = "{0}%" -f $green
+
                 Write-Host "##vso[task.setvariable variable=blueWeight]$blueWeight"
-                Write-Host "##vso[task.setvariable variable=InstallScriptUri]$greenWeight"
+                Write-Host "##vso[task.setvariable variable=greenWeight]$greenWeight"
+                Write-Host "##vso[task.setvariable variable=blueReplicas]$blueReplicas"
+                Write-Host "##vso[task.setvariable variable=greenReplicas]$greenReplicas"
 
 
           - task: PowerShell@2
@@ -75,7 +85,9 @@ stages:
               targetType: 'inline'
               script: |
                 Write-Host "Blue Weight: $(blueWeight)" 
-                Write-Host "Blue Weight: $(greenWeight)"
+                Write-Host "Green Weight: $(greenWeight)"
+                Write-Host "Blue Replicas: $(blueReplicas)" 
+                Write-Host "Green Replicas: $(greenReplicas)"
                 
 
 
