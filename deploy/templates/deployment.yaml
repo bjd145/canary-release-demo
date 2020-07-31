@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.image.name }}-{{ .Values.image.blueTag }}
@@ -32,7 +32,7 @@ spec:
         ports:
         - containerPort: {{ .Values.service.port }}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.image.name }}-{{ .Values.image.greenTag }}
