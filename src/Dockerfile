@@ -1,4 +1,4 @@
-FROM golang:1.10 AS builder
+FROM golang:1.14.6 AS builder
 
 WORKDIR $GOPATH/src/ 
 COPY . ./
