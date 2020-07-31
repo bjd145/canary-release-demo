@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: {{ .Values.image.name }}
-      version: {{ .Values.service.greenVersion }}
+      version: {{ .Values.service.blueVersion }}
   replicas: {{ .Values.blueReplicaCount }}
   strategy:
     type: RollingUpdate
