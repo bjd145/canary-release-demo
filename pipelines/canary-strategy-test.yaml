@@ -49,17 +49,27 @@ stages:
               targetPath: '$(System.DefaultWorkingDirectory)/'
 
           - task: PowerShell@2
+            displayName: "Display Values"
+            targetType: 'inline'
+            script: |
+              Write-Host ("Blue Weight: {0}" -f $(blueWeight) )
+              Write-Host ("Green Weight: {0}" -f $(blueWeight) )
+
+          - task: PowerShell@2
             displayName: "Set Values"
+            targetType: 'inline'
             script: |
               Write-Host ("Strategy Increment {0}" -f $(strategy.increment) )
-
+      
               $blueWeight = "{0}%" -f $(strategy.increment) 
               $greenWeight = "{0}%" -f (100 - $(strategy.increment))
               Write-Host "##vso[task.setvariable variable=blueWeight]$blueWeight"
               Write-Host "##vso[task.setvariable variable=InstallScriptUri]$greenWeight"
 
+
           - task: PowerShell@2
             displayName: "Display Values"
+            targetType: 'inline'
             script: |
               Write-Host ("Blue Weight: {0}" -f $(blueWeight) )
               Write-Host ("Green Weight: {0}" -f $(blueWeight) )
