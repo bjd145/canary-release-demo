@@ -74,7 +74,7 @@ stages:
                 namespace: whatosapi
                 command: upgrade
                 chartType: FilePath
-                chartName: '$(System.DefaultWorkingDirectory)/drop/deploy'
+                chartName: '$(System.ArtifactsDirectory)/drop'
                 releaseName: 'whatosapi'
                 overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
-                valueFile: '$(System.DefaultWorkingDirectory)/drop/deploy/values.yaml'
+                valueFile: '$(System.ArtifactsDirectory)/drop/values.yaml'
