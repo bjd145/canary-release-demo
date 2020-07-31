@@ -19,21 +19,21 @@ stages:
       vmImage: 'Ubuntu 16.04'
     steps:
          
-    - bash: |
-        echo $(dockerPassword) | docker login -u $(dockerId) --password-stdin
-      displayName: Log into Docker
+    #- bash: |
+    #    echo $(dockerPassword) | docker login -u $(dockerId) --password-stdin
+    #  displayName: Log into Docker
 
-    - bash: |
-        cd src
-        docker build -t $(imageName):1.0 .
-        docker push $(imageName):1.0
-      displayName: Build and Push Container v1.0
+    #- bash: |
+    #    cd src
+    #    docker build -t $(imageName):1.0 .
+    #    docker push $(imageName):1.0
+    #  displayName: Build and Push Container v1.0
 
-    - bash: |
-        cd src
-        docker build -t $(imageName):2.0 .
-        docker push $(imageName):2.0
-      displayName: Build and Push Container v2.0
+    #- bash: |
+    #    cd src
+    #    docker build -t $(imageName):2.0 .
+    #    docker push $(imageName):2.0
+    #  displayName: Build and Push Container v2.0
 
     - task: CopyFiles@2
       inputs:
@@ -52,30 +52,50 @@ stages:
     environment: 'AKS.whatosapi'
     strategy:
       runOnce:
+      
+        preDeploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              targetPath: '$(System.DefaultWorkingDirectory)/'
+          - task: HelmInstaller@0
+            displayName: 'Install Helm 3.0.2'
+            inputs:
+              helmVersionToInstall: '3.0.2'
+
         deploy:
           steps:
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                buildType: 'current'
-                targetPath: '$(System.DefaultWorkingDirectory)/'
+          - task: HelmDeploy@0
+            displayName: 'helm upgrade'
+            inputs:
+              azureSubscription: 'BJD_APP02_Subscription'
+              azureResourceGroup: 'DevSub02_K8S01_RG'
+              kubernetesCluster: bjdk8s01
+              namespace: whatosapi
+              command: upgrade
+              chartType: filepath
+              chartPath: './drop/helm'
+              releaseName: whatosapi
+              install: true
+              overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
+              valueFile: './drop/helm/values.yaml'
+        
+        postDeploy:
+          steps:
+          - task: ManualIntervention@8
+            inputs:
+              instructions: 'Please validate environment'
 
-            - task: HelmInstaller@0
-              displayName: 'Install Helm 3.0.2'
-              inputs:
-                helmVersionToInstall: '3.0.2'
-
+        on:
+          failure:         
+          steps:
             - task: HelmDeploy@0
-              displayName: 'helm upgrade'
+              displayName: 'helm rollback'
               inputs:
                 azureSubscription: 'BJD_APP02_Subscription'
                 azureResourceGroup: 'DevSub02_K8S01_RG'
                 kubernetesCluster: bjdk8s01
                 namespace: whatosapi
-                command: upgrade
-                chartType: filepath
-                chartName: './drop/helm'
-                chartPath: './drop/helm'
-                releaseName: whatosapi
-                install: true
-                overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
-                valueFile: './drop/helm/values.yaml'
+                command: rollback
+                arguments: 'whatosapi 0'
