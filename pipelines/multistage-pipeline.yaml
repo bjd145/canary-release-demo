@@ -80,9 +80,7 @@ stages:
               install: true
               overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
               valueFile: './drop/helm/values.yaml'
-        
-        postDeploy:
-          steps:
+
           - task: ManualIntervention@8
             inputs:
               instructions: 'Please validate environment'
