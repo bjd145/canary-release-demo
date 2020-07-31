@@ -45,7 +45,7 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: Publish Build Artifacts 
 
-- stage: Canary Deploy - 10% traffic
+- stage: deploy_10_percent
   jobs:
   - deployment: 'Deploy_To_AKS'
     pool:
@@ -71,9 +71,10 @@ stages:
                 azureSubscription: 'BJD_APP02_Subscription'
                 azureResourceGroup: 'DevSub02_K8S01_RG'
                 kubernetesCluster: bjdk8s01
+                namespace: whatosapi
                 command: upgrade
+                chartType: FilePath
                 chartName: '$(System.DefaultWorkingDirectory)/_bjd145_canary-release-demo/deploy'
                 releaseName: 'whatosapi'
                 overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
                 valueFile: '$(System.DefaultWorkingDirectory)/_bjd145_canary-release-demo/deploy/values.yaml'
-                arguments: --namespace whatosapi
