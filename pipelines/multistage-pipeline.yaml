@@ -73,8 +73,8 @@ stages:
                 namespace: whatosapi
                 command: upgrade
                 chartType: filepath
-                chartName: './drop'
+                chartName: './drop/helm'
                 releaseName: whatosapi
                 install: true
                 overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
-                valueFile: './drop/values.yaml'
+                valueFile: './drop/helm/values.yaml'
