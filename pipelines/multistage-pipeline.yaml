@@ -57,7 +57,7 @@ stages:
             - task: DownloadPipelineArtifact@2
               inputs:
                 buildType: 'current'
-                targetPath: '$(System.ArtifactsDirectory)/'
+                targetPath: '$(System.DefaultWorkingDirectory)/'
 
             - task: HelmInstaller@0
               displayName: 'Install Helm 3.0.2'
@@ -72,9 +72,9 @@ stages:
                 kubernetesCluster: bjdk8s01
                 namespace: whatosapi
                 command: upgrade
-                chartType: FilePath
-                chartName: '$(System.ArtifactsDirectory)/drop'
+                chartType: filepath
+                chartName: './drop'
                 releaseName: whatosapi
                 install: true
                 overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
-                valueFile: '$(System.ArtifactsDirectory)/drop/values.yaml'
+                valueFile: './values.yaml'
