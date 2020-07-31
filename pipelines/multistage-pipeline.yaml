@@ -10,6 +10,10 @@ trigger:
 variables:
     dockerid:   'bjd145'
     imageName:  'bjd145/whatos'
+    blueWeight: 0
+    blueReplicas: 0
+    greenWeight: 0
+    greenReplicas: 0
 
 stages:
 - stage: builds
@@ -51,14 +55,33 @@ stages:
       vmImage: 'Ubuntu 16.04'
     environment: 'AKS.whatosapi'
     strategy:
-      runOnce:
-      
+      canary:
+        increments: [10,50,90] 
         deploy:
           steps:
           - task: DownloadPipelineArtifact@2
             inputs:
               buildType: 'current'
               targetPath: '$(System.DefaultWorkingDirectory)/'
+          - task: PowerShell@2
+            displayName: "Deteremine Helm Values"
+            inputs:
+              targetType: 'inline'
+              script: |
+                $pods = @{ "0" = 0; "10" = 1; "50" = 2; "90" = 3; "100" = 4 }
+
+                $green = 100 - $(strategy.increment)
+
+                $blueReplicas = $pods[[convert]::ToString($(strategy.increment))]
+                $greenReplicas = $pods[[convert]::ToString($green)]
+
+                $blueWeight = "{0}%" -f $(strategy.increment) 
+                $greenWeight = "{0}%" -f $green
+
+                Write-Host "##vso[task.setvariable variable=blueWeight]$blueWeight"
+                Write-Host "##vso[task.setvariable variable=greenWeight]$greenWeight"
+                Write-Host "##vso[task.setvariable variable=blueReplicas]$blueReplicas"
+                Write-Host "##vso[task.setvariable variable=greenReplicas]$greenReplicas"
           - task: HelmInstaller@0
             displayName: 'Install Helm 3.0.2'
             inputs:
@@ -75,7 +98,7 @@ stages:
               chartPath: './drop/helm'
               releaseName: whatosapi
               install: true
-              overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
+              overrideValues: 'service.greenWeight=$(greenWeight),service.blueWeight=$(blueWeight),greenReplicaCount=$(greenReplicas),blueReplicaCount=$(blueReplicas) '
               valueFile: './drop/helm/values.yaml'
 
         on:
