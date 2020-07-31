@@ -74,7 +74,7 @@ stages:
                 namespace: whatosapi
                 command: upgrade
                 chartType: FilePath
-                chartName: '$(System.DefaultWorkingDirectory)/_bjd145_canary-release-demo/deploy'
+                chartName: '$(System.DefaultWorkingDirectory)/drop/deploy'
                 releaseName: 'whatosapi'
                 overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
-                valueFile: '$(System.DefaultWorkingDirectory)/_bjd145_canary-release-demo/deploy/values.yaml'
+                valueFile: '$(System.DefaultWorkingDirectory)/drop/deploy/values.yaml'
