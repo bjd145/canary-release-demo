@@ -74,7 +74,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                Write-Host ("Blue Weight: {0}" -f $(blueWeight) )
-                Write-Host ("Green Weight: {0}" -f $(blueWeight) )
+                Write-Host "Blue Weight: $(blueWeight)" 
+                Write-Host "Blue Weight: $(greenWeight)"
+                
 
 
