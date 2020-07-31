@@ -38,10 +38,42 @@ stages:
 
     - task: CopyFiles@2
       inputs:
-        SourceFolder: Deploy
+        SourceFolder: deploy
         TargetFolder: '$(build.artifactstagingdirectory)'
       displayName: Copy Artifacts  
 
     - task: PublishBuildArtifacts@1
       displayName: Publish Build Artifacts 
 
+- stage: Canary Deploy - 10% traffic
+  jobs:
+  - deployment: 'Deploy_To_AKS'
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    environment: 'AKS.whatos'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'current'
+                targetPath: '$(System.ArtifactsDirectory)/'
+
+            - task: HelmInstaller@0
+              displayName: 'Install Helm 3.0.2'
+              inputs:
+                helmVersionToInstall: '3.0.2'
+
+            - task: HelmDeploy@0
+              displayName: 'helm upgrade'
+              inputs:
+                azureSubscription: 'BJD_APP02_Subscription'
+                azureResourceGroup: 'DevSub02_K8S01_RG'
+                kubernetesCluster: bjdk8s01
+                command: upgrade
+                chartName: '$(System.DefaultWorkingDirectory)/_bjd145_canary-release-demo/deploy'
+                releaseName: 'whatosapi'
+                overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
+                valueFile: '$(System.DefaultWorkingDirectory)/_bjd145_canary-release-demo/deploy/values.yaml'
+                arguments: --namespace whatosapi
