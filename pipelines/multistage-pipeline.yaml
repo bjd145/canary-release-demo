@@ -78,13 +78,6 @@ stages:
               overrideValues: 'service.greenWeight=10%,service.blueWeight=90%,greenReplicaCount=1,blueReplicaCount=3 '
               valueFile: './drop/helm/values.yaml'
 
-        routeTraffic:
-          pool: server
-          steps:
-          - task: ManualIntervention@8
-            inputs:
-              instructions: 'Please validate environment'
-
         on:
           failure:         
             steps:
