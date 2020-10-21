@@ -64,7 +64,7 @@ stages:
               buildType: 'current'
               targetPath: '$(System.DefaultWorkingDirectory)/'
           - task: PowerShell@2
-            displayName: "Deteremine Helm Values"
+            displayName: "Determine Helm Values"
             inputs:
               targetType: 'inline'
               script: |
@@ -73,20 +73,23 @@ stages:
                 $green = $(strategy.increment)
                 $blue  = 100 - $(strategy.increment)
                 
-                $blueReplicas = $pods[[convert]::ToString($blue)]
                 $greenReplicas = $pods[[convert]::ToString($green)]
-
-                $blueWeight = "{0}%" -f $blue
+                $blueReplicas = $pods[[convert]::ToString($blue)]
+                
                 $greenWeight = "{0}%" -f $green
-
-                Write-Host "##vso[task.setvariable variable=blueWeight]$blueWeight"
+                $blueWeight = "{0}%" -f $blue
+                
                 Write-Host "##vso[task.setvariable variable=greenWeight]$greenWeight"
-                Write-Host "##vso[task.setvariable variable=blueReplicas]$blueReplicas"
+                Write-Host "##vso[task.setvariable variable=blueWeight]$blueWeight"
+                
                 Write-Host "##vso[task.setvariable variable=greenReplicas]$greenReplicas"
+                Write-Host "##vso[task.setvariable variable=blueReplicas]$blueReplicas"
+                
           - task: HelmInstaller@0
             displayName: 'Install Helm 3.0.2'
             inputs:
               helmVersionToInstall: '3.0.2'
+              
           - task: HelmDeploy@0
             displayName: 'helm upgrade'
             inputs:
