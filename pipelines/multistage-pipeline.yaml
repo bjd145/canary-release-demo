@@ -121,11 +121,15 @@ stages:
               overrideValues: 'service.greenWeight=$(greenWeight),service.blueWeight=$(blueWeight),greenReplicaCount=$(greenReplicas),blueReplicaCount=$(blueReplicas) '
               valueFile: './drop/helm/values.yaml'
           
-          - task: ManualValidation@0
-            inputs:
-              notifyUsers: 'brian@bjdazure.tech'
-              instructions: 'Please validate code deployment....'
-
+          #
+          # Not released yet - https://dev.azure.com/mseng/AzureDevOpsRoadmap/_workitems/edit/1663893
+          #
+          #- task: ManualValidation@0
+          #  inputs:
+          #    notifyUsers: 'brian@bjdazure.tech'
+          #    instructions: 'Please validate code deployment....'
+          #
+          
         on:
           failure:         
             steps:
