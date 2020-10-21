@@ -59,10 +59,12 @@ stages:
         increments: [10,50,90] 
         deploy:
           steps:
+          
           - task: DownloadPipelineArtifact@2
             inputs:
               buildType: 'current'
               targetPath: '$(System.DefaultWorkingDirectory)/'
+
           - task: PowerShell@2
             displayName: "Determine Helm Values"
             inputs:
@@ -89,7 +91,7 @@ stages:
             displayName: 'Install Helm 3.0.2'
             inputs:
               helmVersionToInstall: '3.0.2'
-              
+
           - task: HelmDeploy@0
             displayName: 'helm upgrade'
             inputs:
