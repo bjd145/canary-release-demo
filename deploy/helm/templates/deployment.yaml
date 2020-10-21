@@ -27,7 +27,7 @@ spec:
         image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.blueTag }}
         env:
         - name: API_VERSION
-          value: {{ .Values.image.blueVersion }}
+          value: {{ .Values.service.blueVersion }}
         resources:
           requests:
             memory: "64Mi"
@@ -68,7 +68,7 @@ spec:
         image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.greenTag }}
         env:
         - name: API_VERSION
-          value: {{ .Values.image.greenVersion }}
+          value: {{ .Values.service.greenVersion }}
         resources:
           requests:
             memory: "64Mi"
