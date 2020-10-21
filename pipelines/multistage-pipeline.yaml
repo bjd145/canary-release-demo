@@ -70,9 +70,9 @@ stages:
               script: |
                 $pods = @{ "0" = 0; "10" = 1; "50" = 2; "90" = 3; "100" = 4 }
 
-                $blue  = $(strategy.increment)
-                $green = 100 - $(strategy.increment)
-
+                $green = $(strategy.increment)
+                $blue  = 100 - $(strategy.increment)
+                
                 $blueReplicas = $pods[[convert]::ToString($blue)]
                 $greenReplicas = $pods[[convert]::ToString($green)]
 
