@@ -25,6 +25,9 @@ spec:
       containers:
       - name: {{ .Values.image.name }}
         image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.blueTag }}
+        env:
+        - name: API_VERSION
+          value: {{ .Values.image.blueVersion }}
         resources:
           requests:
             memory: "64Mi"
@@ -63,6 +66,9 @@ spec:
       containers:
       - name: {{ .Values.image.name }}
         image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.greenTag }}
+        env:
+        - name: API_VERSION
+          value: {{ .Values.image.greenVersion }}
         resources:
           requests:
             memory: "64Mi"
