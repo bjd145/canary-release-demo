@@ -59,11 +59,25 @@ stages:
         increments: [10,50,90] 
         deploy:
           steps:
-          
+
           - task: DownloadPipelineArtifact@2
             inputs:
               buildType: 'current'
               targetPath: '$(System.DefaultWorkingDirectory)/'
+
+          #
+          # Ways to Validate Roll Forward with Release
+          #- task: AzureMonitor@1
+          #  inputs:
+          #     connectedServiceNameARM: 'Core_Subscription'
+          #     ResourceGroupName: 'Core_Infra_Monitor_RG'
+          #
+          #- task: AzureFunction@1
+          # inputs:
+          #  function: 
+          #  method: 'POST'
+          #  waitForCompletion: 'true'
+          #
 
           - task: PowerShell@2
             displayName: "Determine Helm Values"
@@ -106,6 +120,11 @@ stages:
               install: true
               overrideValues: 'service.greenWeight=$(greenWeight),service.blueWeight=$(blueWeight),greenReplicaCount=$(greenReplicas),blueReplicaCount=$(blueReplicas) '
               valueFile: './drop/helm/values.yaml'
+          
+          - task: ManualValidation@0
+            inputs:
+              notifyUsers: 'brian@bjdazure.tech'
+              instructions: 'Please validate code deployment....'
 
         on:
           failure:         
